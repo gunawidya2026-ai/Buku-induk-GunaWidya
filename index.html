@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buku Induk & Katalog Digital Perpustakaan Guna Widya - SMAN 1 Sukasada</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            blue: '#1E3A8A',
+                            darkblue: '#172554',
+                            gold: '#F59E0B',
+                            goldlight: '#FEF3C7',
+                            bg: '#F8FAFC'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+        }
+        .bg-grid-pattern {
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        /* Hide scrollbars for clean UI */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-800 bg-slate-50 min-h-screen flex flex-col justify-between selection:bg-amber-100 selection:text-amber-900">
+
+    <!-- Header / Navbar Section -->
+    <header class="bg-brand-blue text-white shadow-xl sticky top-0 z-30 border-b border-amber-400/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                
+                <!-- School & Library Branding -->
+                <div class="flex items-center space-x-3.5 w-full md:w-auto">
+                    <div class="w-12 h-12 rounded-xl bg-amber-400 text-brand-blue flex items-center justify-center font-bold text-2xl shadow-lg ring-2 ring-amber-300/50 shrink-0">
+                        <i class="fa-solid fa-book-bookmark"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-semibold uppercase tracking-wider bg-amber-400/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-400/30">
+                                SMAN 1 Sukasada
+                            </span>
+                            <span id="roleBadge" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-700 text-slate-200">
+                                Mode Siswa
+                            </span>
+                        </div>
+                        <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white leading-tight">
+                            PERPUSTAKAAN GUNA WIDYA
+                        </h1>
+                        <p class="text-xs text-slate-300 font-medium">Buku Induk & Katalog Digital Interaktif</p>
+                    </div>
+                </div>
+
+                <!-- Admin & Action Area -->
+                <div class="flex items-center justify-between md:justify-end w-full md:w-auto gap-3 border-t md:border-t-0 pt-3 md:pt-0 border-blue-800/60">
+                    <!-- Current User Display -->
+                    <div id="userStatusContainer" class="hidden text-right text-xs">
+                        <div class="text-slate-300">Petugas Aktif:</div>
+                        <div id="activeLibrarianName" class="font-bold text-amber-300 text-sm">I Made Widya, S.Pd.</div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex items-center gap-2">
+                        <!-- Add Book Button (Admin Only) -->
+                        <button id="btnOpenAddBook" onclick="openBookModal()" class="hidden items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-lg transition duration-200 shadow-md hover:shadow-emerald-900/20 active:scale-95">
+                            <i class="fa-solid fa-circle-plus"></i>
+                            <span>Tambah Buku</span>
+                        </button>
+
+                        <!-- Quick Print Button -->
+                        <button onclick="window.print()" class="flex items-center gap-2 bg-blue-900/80 hover:bg-blue-800 text-slate-200 text-xs sm:text-sm font-medium px-3 py-2 rounded-lg border border-blue-700/50 transition">
+                            <i class="fa-solid fa-print"></i>
+                            <span class="hidden sm:inline">Cetak</span>
+                        </button>
+
+                        <!-- Login / Logout Toggle Button -->
+                        <button id="authBtn" onclick="handleAuthToggle()" class="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm px-4 py-2 rounded-lg transition duration-200 shadow-md active:scale-95">
+                            <i id="authBtnIcon" class="fa-solid fa-right-to-bracket"></i>
+                            <span id="authBtnText">Login Petugas</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero / Information Stats Bar -->
+    <section class="bg-gradient-to-b from-brand-blue via-blue-900 to-slate-900 text-white py-6 px-4 sm:px-6 lg:px-8 border-b border-slate-200/10 no-print">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                
+                <!-- Stat 1: Total Titles -->
+                <div class="bg-white/10 backdrop-blur-md rounded-xl p-3.5 sm:p-4 border border-white/10 flex items-center gap-3">
+                    <div class="p-3 bg-amber-500/20 text-amber-300 rounded-lg text-xl sm:text-2xl">
+                        <i class="fa-solid fa-book"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-300 font-medium">Total Judul Buku</p>
+                        <p id="statTotalTitles" class="text-xl sm:text-2xl font-bold text-white">0</p>
+                    </div>
+                </div>
+
+                <!-- Stat 2: Total Copies -->
+                <div class="bg-white/10 backdrop-blur-md rounded-xl p-3.5 sm:p-4 border border-white/10 flex items-center gap-3">
+                    <div class="p-3 bg-blue-400/20 text-blue-300 rounded-lg text-xl sm:text-2xl">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-300 font-medium">Total Eksemplar</p>
+                        <p id="statTotalCopies" class="text-xl sm:text-2xl font-bold text-white">0</p>
+                    </div>
+                </div>
+
+                <!-- Stat 3: Total Categories -->
+                <div class="bg-white/10 backdrop-blur-md rounded-xl p-3.5 sm:p-4 border border-white/10 flex items-center gap-3">
+                    <div class="p-3 bg-emerald-400/20 text-emerald-300 rounded-lg text-xl sm:text-2xl">
+                        <i class="fa-solid fa-tags"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-300 font-medium">Klasifikasi / Subjek</p>
+                        <p id="statTotalCategories" class="text-xl sm:text-2xl font-bold text-white">0</p>
+                    </div>
+                </div>
+
+                <!-- Stat 4: Mode Access Indicator -->
+                <div class="bg-white/10 backdrop-blur-md rounded-xl p-3.5 sm:p-4 border border-white/10 flex items-center gap-3">
+                    <div id="statModeIcon" class="p-3 bg-purple-400/20 text-purple-300 rounded-lg text-xl sm:text-2xl">
+                        <i class="fa-solid fa-user-graduate"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-300 font-medium">Hak Akses Anda</p>
+                        <p id="statModeText" class="text-sm sm:text-base font-bold text-amber-300 truncate">Katalog Siswa</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- Controls, Filter & Search Bar Section -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 mb-8 no-print">
+            <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+                
+                <!-- Search Input Bar -->
+                <div class="relative flex-grow">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+                    </div>
+                    <input type="text" id="searchInput" oninput="renderApp()" placeholder="Cari Judul Buku, Pengarang, atau Kode Label (Contoh: 510/MAT)..." 
+                        class="w-full pl-10 pr-10 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-blue focus:border-brand-blue focus:bg-white transition outline-none">
+                    <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Filter Controls -->
+                <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
+                    
+                    <!-- Filter Kategori -->
+                    <div class="w-full sm:w-auto">
+                        <select id="categoryFilter" onchange="renderApp()" class="w-full py-3 px-3.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm font-medium focus:ring-2 focus:ring-brand-blue outline-none cursor-pointer">
+                            <option value="ALL">Semua Klasifikasi</option>
+                            <option value="Matematika">Matematika (500)</option>
+                            <option value="Sains">Sains & IPA (500)</option>
+                            <option value="Bahasa">Bahasa & Sastra (400/800)</option>
+                            <option value="Sejarah & Budaya">Sejarah & Budaya (900)</option>
+                            <option value="Sosial">Ilmu Sosial (300)</option>
+                            <option value="Teknologi">Teknologi & Komputer (600)</option>
+                            <option value="Lainnya">Klasifikasi Lainnya</option>
+                        </select>
+                    </div>
+
+                    <!-- Sort Options -->
+                    <div class="w-full sm:w-auto">
+                        <select id="sortBy" onchange="renderApp()" class="w-full py-3 px-3.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm font-medium focus:ring-2 focus:ring-brand-blue outline-none cursor-pointer">
+                            <option value="title-asc">Judul (A - Z)</option>
+                            <option value="title-desc">Judul (Z - A)</option>
+                            <option value="year-desc">Tahun Terbit (Terbaru)</option>
+                            <option value="year-asc">Tahun Terbit (Terlama)</option>
+                            <option value="copies-desc">Eksemplar (Terbanyak)</option>
+                        </select>
+                    </div>
+
+                    <!-- View Toggle Mode (Grid Cards vs Table Buku Induk) -->
+                    <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 shrink-0">
+                        <button id="btnViewGrid" onclick="setViewMode('grid')" class="px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition bg-white shadow-sm text-brand-blue">
+                            <i class="fa-solid fa-border-all"></i>
+                            <span class="hidden sm:inline">Kartu</span>
+                        </button>
+                        <button id="btnViewTable" onclick="setViewMode('table')" class="px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition text-slate-600 hover:text-slate-900">
+                            <i class="fa-solid fa-table-list"></i>
+                            <span class="hidden sm:inline">Tabel Buku Induk</span>
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Active Filters Summary Tag -->
+            <div id="filterSummary" class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                <span id="resultCountText">Menampilkan 0 buku</span>
+                <button onclick="resetAllFilters()" class="text-brand-blue font-semibold hover:underline flex items-center gap-1">
+                    <i class="fa-solid fa-rotate-left"></i> Reset Filter
+                </button>
+            </div>
+        </div>
+
+        <!-- Catalog Container: GRID VIEW -->
+        <div id="gridView" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Dynamic Grid Items Rendered via JavaScript -->
+        </div>
+
+        <!-- Catalog Container: TABLE VIEW (Official Buku Induk Format) -->
+        <div id="tableView" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-4 bg-slate-900 text-white font-bold flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-amber-400"></i>
+                    <span>BUKU INDUK PERPUSTAKAAN GUNA WIDYA</span>
+                </div>
+                <span class="text-xs font-normal text-slate-300">Format Resmi Register Koleksi</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs sm:text-sm text-slate-700">
+                    <thead class="bg-slate-100 text-slate-900 uppercase font-bold text-xs border-b border-slate-200">
+                        <tr>
+                            <th class="py-3.5 px-4 text-center w-12">No.</th>
+                            <th class="py-3.5 px-4">Kode Label / Klasifikasi</th>
+                            <th class="py-3.5 px-4">Judul Buku</th>
+                            <th class="py-3.5 px-4">Pengarang</th>
+                            <th class="py-3.5 px-4 text-center">Tahun</th>
+                            <th class="py-3.5 px-4 text-center">Jumlah Eksemplar</th>
+                            <th class="py-3.5 px-4 text-center border-l border-slate-200 admin-column">Aksi (Admin)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-slate-200 bg-white">
+                        <!-- Dynamic Table Rows Rendered via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Empty State Container -->
+        <div id="emptyState" class="hidden text-center py-16 bg-white rounded-2xl border border-dashed border-slate-300 p-8 my-4">
+            <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fa-solid fa-book-open-reader"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 mb-1">Buku Tidak Ditemukan</h3>
+            <p class="text-slate-500 text-sm max-w-md mx-auto mb-6">Maaf, tidak ada buku dalam Katalog Buku Induk yang sesuai dengan kriteria pencarian atau filter Anda.</p>
+            <button onclick="resetAllFilters()" class="inline-flex items-center gap-2 bg-brand-blue text-white text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-blue-900 transition">
+                <i class="fa-solid fa-arrows-rotate"></i> Reset Semua Filter
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Print Header (Visible only when printing) -->
+    <div class="hidden print-only p-8 text-black">
+        <div class="text-center border-b-2 border-black pb-4 mb-6">
+            <h1 class="text-2xl font-bold uppercase">PEMERINTAH KABUPATEN BULELENG</h1>
+            <h2 class="text-xl font-extrabold uppercase">SMA NEGERI 1 SUKASADA</h2>
+            <h3 class="text-lg font-semibold">PERPUSTAKAAN "GUNA WIDYA"</h3>
+            <p class="text-xs mt-1">Jalan Raya Pancasari - Sukasada, Kabupaten Buleleng, Bali</p>
+            <p class="text-sm font-bold mt-3 underline decoration-double">LAPORAN BUKU INDUK REGISTER KOLEKSI PERPUSTAKAAN</p>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="bg-slate-900 text-slate-400 py-8 px-4 border-t border-slate-800 no-print">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs sm:text-sm">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-amber-500 text-slate-950 font-bold flex items-center justify-center">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <p class="font-bold text-slate-200">Perpustakaan Guna Widya</p>
+                    <p class="text-slate-500 text-xs">SMA Negeri 1 Sukasada © 2026</p>
+                </div>
+            </div>
+            <div class="text-center md:text-right text-xs text-slate-500">
+                <p>Sistem Katalog Digital & Buku Induk Otomatis</p>
+                <p class="mt-0.5">Mode Publik Siswa & Portal Manajemen Petugas</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ================= MODALS SECTION ================= -->
+
+    <!-- 1. MODAL LOGIN PETUGAS -->
+    <div id="loginModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-200 animate-fadeIn">
+            <div class="bg-brand-blue text-white p-5 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-amber-400 text-brand-blue flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg">Login Petugas Perpustakaan</h3>
+                        <p class="text-xs text-slate-300">Sistem Pengelola Buku Induk Guna Widya</p>
+                    </div>
+                </div>
+                <button onclick="closeLoginModal()" class="text-slate-300 hover:text-white p-1 rounded-lg">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleLoginSubmit(event)" class="p-6 space-y-4">
+                <div id="loginErrorMsg" class="hidden p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-red-500"></i>
+                    <span id="loginErrorText">Kode Petugas atau PIN salah!</span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Kode Login / Nama Petugas</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                            <i class="fa-solid fa-id-badge"></i>
+                        </span>
+                        <input type="text" id="loginUserCode" required placeholder="Contoh: PETUGAS01 atau Made Widya" 
+                            class="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-blue focus:border-brand-blue outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Kata Sandi / PIN Petugas</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                            <i class="fa-solid fa-key"></i>
+                        </span>
+                        <input type="password" id="loginPassword" required placeholder="Masukkan PIN Petugas" 
+                            class="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-blue focus:border-brand-blue outline-none">
+                    </div>
+                </div>
+
+                <!-- Helper Hint Box -->
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 space-y-1">
+                    <p class="font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-circle-info text-amber-600"></i> Petunjuk Akses Uji Coba:
+                    </p>
+                    <p>Kode Petugas: <code class="bg-amber-100 px-1 py-0.5 rounded font-mono font-bold">PETUGAS01</code></p>
+                    <p>Kata Sandi/PIN: <code class="bg-amber-100 px-1 py-0.5 rounded font-mono font-bold">123456</code></p>
+                </div>
+
+                <div class="pt-2 flex items-center justify-end gap-3">
+                    <button type="button" onclick="closeLoginModal()" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-100 transition">
+                        Batal
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-brand-blue text-white text-xs font-bold hover:bg-blue-900 transition shadow-md flex items-center gap-2">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>Masuk Mode Admin</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- 2. MODAL FORM TAMBAH / EDIT BUKU (ADMIN ONLY) -->
+    <div id="bookModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden border border-slate-200 animate-fadeIn">
+            <div class="bg-brand-blue text-white p-5 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-amber-400 text-brand-blue flex items-center justify-center font-bold text-lg">
+                        <i id="bookModalIcon" class="fa-solid fa-book"></i>
+                    </div>
+                    <div>
+                        <h3 id="bookModalTitle" class="font-bold text-lg">Tambah Buku Induk Baru</h3>
+                        <p class="text-xs text-slate-300">Lengkapi data register buku perpustakaan</p>
+                    </div>
+                </div>
+                <button onclick="closeBookModal()" class="text-slate-300 hover:text-white p-1 rounded-lg">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleBookFormSubmit(event)" class="p-6 space-y-4">
+                <input type="hidden" id="bookFormId">
+
+                <!-- Judul Buku -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Judul Buku <span class="text-red-500">*</span></label>
+                    <input type="text" id="bookFormTitle" required placeholder="Contoh: Matematika Tingkat Lanjut XI" 
+                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-blue outline-none">
+                </div>
+
+                <!-- Pengarang -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Pengarang / Penulis <span class="text-red-500">*</span></label>
+                    <input type="text" id="bookFormAuthor" required placeholder="Contoh: Dicky Susanto, dkk." 
+                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-blue outline-none">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Tahun Terbit -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Tahun Terbit <span class="text-red-500">*</span></label>
+                        <input type="number" id="bookFormYear" min="1900" max="2099" required placeholder="Contoh: 2023" 
+                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-blue outline-none">
+                    </div>
+
+                    <!-- Jumlah Eksemplar -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Jumlah Eksemplar <span class="text-red-500">*</span></label>
+                        <input type="number" id="bookFormCopies" min="1" required placeholder="Contoh: 5" 
+                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-blue outline-none">
+                    </div>
+                </div>
+
+                <!-- Kode Label Buku / Klasifikasi -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Kode Label Buku / Klasifikasi <span class="text-red-500">*</span></label>
+                    <input type="text" id="bookFormCode" required placeholder="Contoh: 510/MAT/XI/2023" 
+                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono focus:ring-2 focus:ring-brand-blue outline-none">
+                    <p class="text-[11px] text-slate-400 mt-1">Format lazim DDC (Dewey Decimal Classification) / Kode Rak Sekolah</p>
+                </div>
+
+                <!-- Kategori Subjek -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Kategori / Subjek Utama</label>
+                    <select id="bookFormCategory" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-blue outline-none cursor-pointer">
+                        <option value="Matematika">Matematika</option>
+                        <option value="Sains">Sains & IPA</option>
+                        <option value="Bahasa">Bahasa & Sastra</option>
+                        <option value="Sejarah & Budaya">Sejarah & Budaya</option>
+                        <option value="Sosial">Ilmu Sosial</option>
+                        <option value="Teknologi">Teknologi & Komputer</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+
+                <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
+                    <button type="button" onclick="closeBookModal()" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-100 transition">
+                        Batal
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-md flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span id="bookFormSubmitText">Simpan Data Buku</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- 3. MODAL CONFIRM DELETE (ADMIN ONLY) -->
+    <div id="deleteModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full shadow-2xl p-6 border border-slate-200 text-center animate-fadeIn">
+            <div class="w-14 h-14 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-1">Konfirmasi Hapus Buku</h3>
+            <p class="text-slate-500 text-xs mb-4">Apakah Anda yakin ingin menghapus data buku ini dari Buku Induk Register?</p>
+
+            <div class="bg-slate-50 rounded-xl p-3 border border-slate-200 mb-5 text-left">
+                <p id="deleteBookTitle" class="font-bold text-xs text-slate-800 line-clamp-2">Judul Buku</p>
+                <p id="deleteBookCode" class="text-[11px] font-mono text-slate-500 mt-1">Kode: 000/XYZ</p>
+            </div>
+
+            <div class="flex items-center justify-center gap-3">
+                <button onclick="closeDeleteModal()" class="w-1/2 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-100 transition">
+                    Batal
+                </button>
+                <button id="btnConfirmDelete" class="w-1/2 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition shadow-md flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-trash"></i>
+                    <span>Ya, Hapus</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 4. MODAL DETAIL BUKU (FOR ALL USERS) -->
+    <div id="detailModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden border border-slate-200 animate-fadeIn">
+            <div class="bg-gradient-to-r from-brand-blue to-blue-900 text-white p-5 flex items-start justify-between">
+                <div>
+                    <span id="detailCategoryBadge" class="inline-block bg-amber-400 text-slate-950 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full mb-1">
+                        KATEGORI
+                    </span>
+                    <h3 id="detailTitle" class="font-bold text-lg leading-snug">Judul Buku Lengkap</h3>
+                    <p id="detailAuthor" class="text-xs text-slate-300 mt-0.5">Oleh: Pengarang</p>
+                </div>
+                <button onclick="closeDetailModal()" class="text-slate-300 hover:text-white p-1 rounded-lg">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-4">
+                <div class="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div>
+                        <p class="text-[11px] font-bold text-slate-400 uppercase">Kode Label Buku</p>
+                        <p id="detailCode" class="font-mono text-sm font-bold text-brand-blue">510/MAT/2023</p>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-bold text-slate-400 uppercase">Tahun Terbit</p>
+                        <p id="detailYear" class="text-sm font-bold text-slate-800">2023</p>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-bold text-slate-400 uppercase">Jumlah Eksemplar</p>
+                        <p id="detailCopies" class="text-sm font-bold text-slate-800">5 Buku Available</p>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-bold text-slate-400 uppercase">Status Ketersediaan</p>
+                        <span id="detailStatusBadge" class="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full mt-0.5">
+                            <i class="fa-solid fa-circle-check"></i> Tersedia
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Mock Barcode Section -->
+                <div class="border-t border-slate-100 pt-3 text-center">
+                    <p class="text-[11px] text-slate-400 uppercase font-semibold mb-1">Barcode Register Buku Induk Perpustakaan</p>
+                    <div class="bg-white border border-slate-300 p-3 rounded-xl inline-block">
+                        <div class="font-mono text-xl font-extrabold tracking-widest text-slate-900 selection:bg-none select-none">
+                            ||| | |||| | ||| |||| |
+                        </div>
+                        <p id="detailBarcodeText" class="font-mono text-[10px] text-slate-500 mt-1">GW-SMAN1SUKASADA-510</p>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex justify-end">
+                    <button onclick="closeDetailModal()" class="px-5 py-2.5 rounded-xl bg-brand-blue text-white text-xs font-bold hover:bg-blue-900 transition">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Toast Notification Banner -->
+    <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700">
+            <div id="toastIcon" class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <p id="toastMessage" class="text-xs font-bold">Aksi Berhasil Dilakukan!</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================= JAVASCRIPT APP LOGIC ================= -->
+    <script>
+        // Mock dataset representing Buku Induk Perpustakaan Guna Widya SMAN 1 Sukasada
+        const initialBooks = [
+            {
+                id: "B-101",
+                title: "Matematika Tingkat Lanjut SMA/MA Kelas XI",
+                author: "Dicky Susanto, dkk.",
+                year: 2022,
+                code: "510/MAT/XI/2022",
+                copies: 12,
+                category: "Matematika"
+            },
+            {
+                id: "B-102",
+                title: "Bahasa Indonesia: Cerdas Berbahasa dan Bersastra",
+                author: "Engkos Kosasih",
+                year: 2021,
+                code: "810/IND/X/2021",
+                copies: 25,
+                category: "Bahasa"
+            },
+            {
+                id: "B-103",
+                title: "Fisika untuk SMA/MA Kelas XII (Kurikulum Merdeka)",
+                author: "Bambang Ruwanto",
+                year: 2023,
+                code: "530/FIS/XII/2023",
+                copies: 8,
+                category: "Sains"
+            },
+            {
+                id: "B-104",
+                title: "Sejarah Kebudayaan Bali dan Pura-Pura Buleleng",
+                author: "I Gusti Ngurah Putu",
+                year: 2019,
+                code: "959.8/SEJ/BAL/2019",
+                copies: 5,
+                category: "Sejarah & Budaya"
+            },
+            {
+                id: "B-105",
+                title: "Biologi Molekuler Dasar dan Aplikasinya",
+                author: "Campbell & Reece",
+                year: 2020,
+                code: "570/BIO/2020",
+                copies: 10,
+                category: "Sains"
+            },
+            {
+                id: "B-106",
+                title: "Laskar Pelangi",
+                author: "Andrea Hirata",
+                year: 2018,
+                code: "813/NOV/HIR/2018",
+                copies: 6,
+                category: "Bahasa"
+            },
+            {
+                id: "B-107",
+                title: "Kimia Organik untuk Sekolah Menengah",
+                author: "Unggul Sudarmo",
+                year: 2021,
+                code: "540/KIM/XI/2021",
+                copies: 15,
+                category: "Sains"
+            },
+            {
+                id: "B-108",
+                title: "English for Academic Purposes: Senior High School",
+                author: "Siti Mukminatun",
+                year: 2023,
+                code: "420/ING/XII/2023",
+                copies: 20,
+                category: "Bahasa"
+            },
+            {
+                id: "B-109",
+                title: "Sosiologi: Keanekaragaman Masyarakat Bali",
+                author: "I Ketut Ardhana",
+                year: 2020,
+                code: "301/SOS/BAL/2020",
+                copies: 7,
+                category: "Sosial"
+            }
+        ];
+
+        // Global State
+        let booksData = [...initialBooks];
+        let currentRole = 'guest'; // 'guest' or 'admin'
+        let currentPetugas = null;
+        let viewMode = 'grid'; // 'grid' or 'table'
+        let bookToDeleteId = null;
+
+        // Color mapper for visually distinct book badges
+        const categoryColors = {
+            'Matematika': 'bg-blue-100 text-blue-800 border-blue-300',
+            'Sains': 'bg-emerald-100 text-emerald-800 border-emerald-300',
+            'Bahasa': 'bg-purple-100 text-purple-800 border-purple-300',
+            'Sejarah & Budaya': 'bg-amber-100 text-amber-800 border-amber-300',
+            'Sosial': 'bg-rose-100 text-rose-800 border-rose-300',
+            'Teknologi': 'bg-cyan-100 text-cyan-800 border-cyan-300',
+            'Lainnya': 'bg-slate-100 text-slate-800 border-slate-300'
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderApp();
+        });
+
+        function renderApp() {
+            // 1. Get Filters
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const category = document.getElementById('categoryFilter').value;
+            const sortBy = document.getElementById('sortBy').value;
+
+            // Show/Hide search clear button
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (query.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+
+            // 2. Filter Logic
+            let filtered = booksData.filter(book => {
+                const matchQuery = book.title.toLowerCase().includes(query) || 
+                                   book.author.toLowerCase().includes(query) || 
+                                   book.code.toLowerCase().includes(query);
+                
+                const matchCategory = (category === 'ALL') || (book.category === category);
+
+                return matchQuery && matchCategory;
+            });
+
+            // 3. Sorting Logic
+            filtered.sort((a, b) => {
+                if (sortBy === 'title-asc') return a.title.localeCompare(b.title);
+                if (sortBy === 'title-desc') return b.title.localeCompare(a.title);
+                if (sortBy === 'year-desc') return b.year - a.year;
+                if (sortBy === 'year-asc') return a.year - b.year;
+                if (sortBy === 'copies-desc') return b.copies - a.copies;
+                return 0;
+            });
+
+            // 4. Update Stats Dashboard
+            updateStats();
+
+            // 5. Update Result Counter
+            document.getElementById('resultCountText').innerText = `Menampilkan ${filtered.length} dari ${booksData.length} buku`;
+
+            // 6. Handle Empty State
+            const emptyState = document.getElementById('emptyState');
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                document.getElementById('gridView').classList.add('hidden');
+                document.getElementById('tableView').classList.add('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            // 7. Render Views based on viewMode
+            if (viewMode === 'grid') {
+                document.getElementById('gridView').classList.remove('hidden');
+                document.getElementById('tableView').classList.add('hidden');
+                renderGridView(filtered);
+            } else {
+                document.getElementById('gridView').classList.add('hidden');
+                document.getElementById('tableView').classList.remove('hidden');
+                renderTableView(filtered);
+            }
+
+            // 8. Update Role Visibility Rules
+            updateRoleUI();
+        }
+
+        function renderGridView(books) {
+            const container = document.getElementById('gridView');
+            container.innerHTML = '';
+
+            books.forEach(book => {
+                const badgeStyle = categoryColors[book.category] || categoryColors['Lainnya'];
+                
+                const cardHtml = `
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between overflow-hidden group">
+                        
+                        <!-- Card Top Bar & Cover Header -->
+                        <div class="p-5 flex-grow">
+                            <div class="flex items-center justify-between gap-2 mb-3">
+                                <span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border ${badgeStyle}">
+                                    ${book.category}
+                                </span>
+                                <span class="text-xs font-mono bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-semibold border border-slate-200">
+                                    ${book.code}
+                                </span>
+                            </div>
+
+                            <h3 class="font-bold text-slate-900 text-base leading-snug group-hover:text-brand-blue transition line-clamp-2 mb-1.5" title="${book.title}">
+                                ${book.title}
+                            </h3>
+
+                            <p class="text-xs text-slate-500 font-medium mb-3 flex items-center gap-1.5">
+                                <i class="fa-regular fa-user text-slate-400"></i> ${book.author}
+                            </p>
+
+                            <div class="flex items-center gap-4 text-xs text-slate-600 mt-2 pt-2 border-t border-slate-100">
+                                <div>
+                                    <span class="text-slate-400">Tahun:</span>
+                                    <span class="font-bold text-slate-800">${book.year}</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-400">Eksemplar:</span>
+                                    <span class="font-bold text-amber-600">${book.copies} Buah</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Bottom Footer Actions -->
+                        <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-2">
+                            <!-- Detail Button (Always Available) -->
+                            <button onclick="openDetailModal('${book.id}')" class="text-xs font-bold text-brand-blue hover:text-blue-900 flex items-center gap-1 transition">
+                                <i class="fa-solid fa-circle-info"></i> Detail Buku
+                            </button>
+
+                            <!-- Admin Actions (Edit & Delete) -->
+                            <div class="admin-only flex items-center gap-1.5 ${currentRole === 'admin' ? '' : 'hidden'}">
+                                <button onclick="openBookModal('${book.id}')" class="p-1.5 rounded-lg bg-amber-100 text-amber-800 hover:bg-amber-200 text-xs transition" title="Edit Buku">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <button onclick="openDeleteModal('${book.id}')" class="p-1.5 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 text-xs transition" title="Hapus Buku">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', cardHtml);
+            });
+        }
+
+        function renderTableView(books) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            books.forEach((book, idx) => {
+                const rowHtml = `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-3 px-4 text-center font-bold text-slate-500">${idx + 1}</td>
+                        <td class="py-3 px-4 font-mono text-xs font-bold text-brand-blue">${book.code}</td>
+                        <td class="py-3 px-4 font-bold text-slate-800">${book.title}</td>
+                        <td class="py-3 px-4 text-slate-600">${book.author}</td>
+                        <td class="py-3 px-4 text-center font-semibold text-slate-700">${book.year}</td>
+                        <td class="py-3 px-4 text-center">
+                            <span class="inline-block bg-amber-100 text-amber-900 font-bold px-2.5 py-0.5 rounded-full text-xs">
+                                ${book.copies} eksemplar
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-center border-l border-slate-100 admin-column">
+                            <div class="flex items-center justify-center gap-2">
+                                <button onclick="openDetailModal('${book.id}')" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold" title="Lihat Detail">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                                <div class="admin-only flex items-center gap-1 ${currentRole === 'admin' ? '' : 'hidden'}">
+                                    <button onclick="openBookModal('${book.id}')" class="px-2 py-1 rounded bg-amber-500 text-white text-xs font-bold hover:bg-amber-600" title="Edit">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    <button onclick="openDeleteModal('${book.id}')" class="px-2 py-1 rounded bg-red-600 text-white text-xs font-bold hover:bg-red-700" title="Hapus">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', rowHtml);
+            });
+        }
+
+        function updateStats() {
+            const totalTitles = booksData.length;
+            const totalCopies = booksData.reduce((acc, book) => acc + Number(book.copies), 0);
+            const categories = new Set(booksData.map(b => b.category)).size;
+
+            document.getElementById('statTotalTitles').innerText = totalTitles;
+            document.getElementById('statTotalCopies').innerText = totalCopies;
+            document.getElementById('statTotalCategories').innerText = categories;
+        }
+
+        function updateRoleUI() {
+            const roleBadge = document.getElementById('roleBadge');
+            const authBtnText = document.getElementById('authBtnText');
+            const authBtnIcon = document.getElementById('authBtnIcon');
+            const authBtn = document.getElementById('authBtn');
+            const btnOpenAddBook = document.getElementById('btnOpenAddBook');
+            const userStatusContainer = document.getElementById('userStatusContainer');
+            const statModeText = document.getElementById('statModeText');
+            const statModeIcon = document.getElementById('statModeIcon');
+
+            if (currentRole === 'admin') {
+                // Admin Mode Active
+                roleBadge.innerText = 'Mode Petugas (CRUD Active)';
+                roleBadge.className = 'text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500 text-white animate-pulse';
+
+                authBtnText.innerText = 'Keluar (Logout)';
+                authBtnIcon.className = 'fa-solid fa-right-from-bracket';
+                authBtn.className = 'flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white font-bold text-xs sm:text-sm px-4 py-2 rounded-lg transition duration-200 shadow-md active:scale-95';
+
+                btnOpenAddBook.classList.remove('hidden');
+                btnOpenAddBook.classList.add('flex');
+
+                userStatusContainer.classList.remove('hidden');
+                statModeText.innerText = 'Mode Admin (Full Access)';
+                statModeText.className = 'text-sm sm:text-base font-bold text-emerald-400 truncate';
+                statModeIcon.className = 'p-3 bg-emerald-400/20 text-emerald-300 rounded-lg text-xl sm:text-2xl';
+
+                // Show all admin buttons on cards
+                document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
+            } else {
+                // Public Guest Mode Active
+                roleBadge.innerText = 'Mode Siswa (Read Only)';
+                roleBadge.className = 'text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-700 text-slate-200';
+
+                authBtnText.innerText = 'Login Petugas';
+                authBtnIcon.className = 'fa-solid fa-right-to-bracket';
+                authBtn.className = 'flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm px-4 py-2 rounded-lg transition duration-200 shadow-md active:scale-95';
+
+                btnOpenAddBook.classList.add('hidden');
+                btnOpenAddBook.classList.remove('flex');
+
+                userStatusContainer.classList.add('hidden');
+                statModeText.innerText = 'Katalog Siswa';
+                statModeText.className = 'text-sm sm:text-base font-bold text-amber-300 truncate';
+                statModeIcon.className = 'p-3 bg-purple-400/20 text-purple-300 rounded-lg text-xl sm:text-2xl';
+
+                // Hide all admin buttons on cards
+                document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
+            }
+        }
+
+        function handleAuthToggle() {
+            if (currentRole === 'admin') {
+                // Perform Logout
+                currentRole = 'guest';
+                currentPetugas = null;
+                showToast('Berhasil keluar dari Mode Admin.', 'info');
+                renderApp();
+            } else {
+                // Open Login Modal
+                openLoginModal();
+            }
+        }
+
+        function openLoginModal() {
+            document.getElementById('loginUserCode').value = 'PETUGAS01';
+            document.getElementById('loginPassword').value = '123456';
+            document.getElementById('loginErrorMsg').classList.add('hidden');
+            document.getElementById('loginModal').classList.remove('hidden');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.add('hidden');
+        }
+
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            const userCode = document.getElementById('loginUserCode').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            // Simple Security Validation Rule
+            if ((userCode.toUpperCase() === 'PETUGAS01' || userCode.toLowerCase().includes('made') || userCode.toLowerCase().includes('petugas')) && password === '123456') {
+                currentRole = 'admin';
+                currentPetugas = {
+                    name: 'I Made Widya, S.Pd.',
+                    code: userCode.toUpperCase()
+                };
+                document.getElementById('activeLibrarianName').innerText = currentPetugas.name;
+                closeLoginModal();
+                showToast('Selamat Datang! Berhasil Login Mode Petugas.', 'success');
+                renderApp();
+            } else {
+                document.getElementById('loginErrorText').innerText = 'Kode Petugas atau PIN Kata Sandi Salah!';
+                document.getElementById('loginErrorMsg').classList.remove('hidden');
+            }
+        }
+
+        // Open Add or Edit Book Modal
+        function openBookModal(bookId = null) {
+            if (currentRole !== 'admin') {
+                showToast('Akses Ditolak: Hanya Petugas yang berhak mengedit data.', 'error');
+                return;
+            }
+
+            const modalTitle = document.getElementById('bookModalTitle');
+            const submitText = document.getElementById('bookFormSubmitText');
+
+            if (bookId) {
+                // Edit Mode
+                const book = booksData.find(b => b.id === bookId);
+                if (!book) return;
+
+                document.getElementById('bookFormId').value = book.id;
+                document.getElementById('bookFormTitle').value = book.title;
+                document.getElementById('bookFormAuthor').value = book.author;
+                document.getElementById('bookFormYear').value = book.year;
+                document.getElementById('bookFormCopies').value = book.copies;
+                document.getElementById('bookFormCode').value = book.code;
+                document.getElementById('bookFormCategory').value = book.category;
+
+                modalTitle.innerText = 'Edit Data Buku Induk';
+                submitText.innerText = 'Perbarui Data Buku';
+            } else {
+                // Add New Mode
+                document.getElementById('bookFormId').value = '';
+                document.getElementById('bookFormTitle').value = '';
+                document.getElementById('bookFormAuthor').value = '';
+                document.getElementById('bookFormYear').value = new Date().getFullYear();
+                document.getElementById('bookFormCopies').value = '5';
+                document.getElementById('bookFormCode').value = '';
+                document.getElementById('bookFormCategory').value = 'Matematika';
+
+                modalTitle.innerText = 'Tambah Buku Induk Baru';
+                submitText.innerText = 'Simpan Data Buku';
+            }
+
+            document.getElementById('bookModal').classList.remove('hidden');
+        }
+
+        function closeBookModal() {
+            document.getElementById('bookModal').classList.add('hidden');
+        }
+
+        function handleBookFormSubmit(e) {
+            e.preventDefault();
+
+            if (currentRole !== 'admin') return;
+
+            const id = document.getElementById('bookFormId').value;
+            const title = document.getElementById('bookFormTitle').value.trim();
+            const author = document.getElementById('bookFormAuthor').value.trim();
+            const year = parseInt(document.getElementById('bookFormYear').value);
+            const copies = parseInt(document.getElementById('bookFormCopies').value);
+            const code = document.getElementById('bookFormCode').value.trim();
+            const category = document.getElementById('bookFormCategory').value;
+
+            if (id) {
+                // Update Existing Book
+                const index = booksData.findIndex(b => b.id === id);
+                if (index !== -1) {
+                    booksData[index] = { id, title, author, year, copies, code, category };
+                    showToast('Data buku berhasil diperbarui.', 'success');
+                }
+            } else {
+                // Create New Book Entry
+                const newId = 'B-' + (Date.now() % 10000);
+                booksData.unshift({
+                    id: newId,
+                    title,
+                    author,
+                    year,
+                    copies,
+                    code,
+                    category
+                });
+                showToast('Buku baru berhasil ditambahkan ke Buku Induk!', 'success');
+            }
+
+            closeBookModal();
+            renderApp();
+        }
+
+        function openDeleteModal(bookId) {
+            if (currentRole !== 'admin') {
+                showToast('Akses Ditolak: Hanya Petugas yang berhak menghapus data.', 'error');
+                return;
+            }
+
+            const book = booksData.find(b => b.id === bookId);
+            if (!book) return;
+
+            bookToDeleteId = bookId;
+            document.getElementById('deleteBookTitle').innerText = book.title;
+            document.getElementById('deleteBookCode').innerText = `Kode Label: ${book.code}`;
+
+            document.getElementById('btnConfirmDelete').onclick = () => confirmDeleteBook();
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+            bookToDeleteId = null;
+        }
+
+        function confirmDeleteBook() {
+            if (!bookToDeleteId) return;
+
+            booksData = booksData.filter(b => b.id !== bookToDeleteId);
+            closeDeleteModal();
+            showToast('Buku berhasil dihapus dari register Buku Induk.', 'success');
+            renderApp();
+        }
+
+        function openDetailModal(bookId) {
+            const book = booksData.find(b => b.id === bookId);
+            if (!book) return;
+
+            document.getElementById('detailTitle').innerText = book.title;
+            document.getElementById('detailAuthor').innerText = `Pengarang: ${book.author}`;
+            document.getElementById('detailCode').innerText = book.code;
+            document.getElementById('detailYear').innerText = book.year;
+            document.getElementById('detailCopies').innerText = `${book.copies} Eksemplar Tersedia`;
+            document.getElementById('detailCategoryBadge').innerText = book.category;
+            document.getElementById('detailBarcodeText').innerText = `GW-SUKASADA-${book.code.replace(/[^a-zA-Z0-9]/g, '')}`;
+
+            document.getElementById('detailModal').classList.remove('hidden');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+        }
+
+        function setViewMode(mode) {
+            viewMode = mode;
+            const btnGrid = document.getElementById('btnViewGrid');
+            const btnTable = document.getElementById('btnViewTable');
+
+            if (mode === 'grid') {
+                btnGrid.className = 'px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition bg-white shadow-sm text-brand-blue';
+                btnTable.className = 'px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition text-slate-600 hover:text-slate-900';
+            } else {
+                btnTable.className = 'px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition bg-white shadow-sm text-brand-blue';
+                btnGrid.className = 'px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition text-slate-600 hover:text-slate-900';
+            }
+
+            renderApp();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            renderApp();
+        }
+
+        function resetAllFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = 'ALL';
+            document.getElementById('sortBy').value = 'title-asc';
+            renderApp();
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toastNotification');
+            const toastMsg = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.innerText = message;
+
+            if (type === 'success') {
+                toastIcon.className = 'w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold';
+                toastIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+            } else if (type === 'error') {
+                toastIcon.className = 'w-7 h-7 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center font-bold';
+                toastIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+            } else {
+                toastIcon.className = 'w-7 h-7 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold';
+                toastIcon.innerHTML = '<i class="fa-solid fa-circle-info"></i>';
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
